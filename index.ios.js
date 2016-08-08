@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component} from 'react';
-import {AppRegistry, View, Text} from 'react-native';
+import {AppRegistry, NavigatorIOS, View, Text} from 'react-native';
 
 var styles = {
   text: {
@@ -8,12 +8,28 @@ var styles = {
     backgroundColor: 'white',
     fontSize: 30,
     margin: 80
+  },
+  container: {
+    flex: 1
+  }
+}
+
+class HelloWorld extends Component {
+  render() {
+    return <Text style={styles.text}> "Hello World!"</Text>
   }
 }
 
 class PropertyFinderApp extends Component {
   render() {
-    return <Text style={styles.text}> "Hello World!"</Text>
+    return (
+      <NavigatorIOS
+        style={styles.container}
+        initialRoute={{
+          title: 'Property Finder',
+          component: HelloWorld,
+        }}/>
+    );
   }
 }
 
