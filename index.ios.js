@@ -1,6 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
 import {AppRegistry, NavigatorIOS, View, Text} from 'react-native';
+var SearchPage = require('./SearchPage');
 
 var styles = {
   text: {
@@ -27,7 +28,7 @@ class PropertyFinderApp extends Component {
         style={styles.container}
         initialRoute={{
           title: 'Property Finder',
-          component: HelloWorld,
+          component: SearchPage,
         }}/>
     );
   }
