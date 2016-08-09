@@ -66,7 +66,8 @@ class SearchPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchString: 'london'
+      searchString: 'london',
+      isLoading: false
     };
   }
   onSearchTextChanged(event) {
@@ -74,7 +75,19 @@ class SearchPage extends Component {
     this.setState({ searchString: event.nativeEvent.text });
     console.log(this.state.searchString);
   }
+  _executeQuery(query) {
+    console.log(query);
+    this.setState({ isLoading: true });
+  }
+  onSearchPressed() {
+    var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
+    thi._executeQuery(query);
+  }
   render() {
+    var spinner = this.state.isLoading ?
+      ( <ActivityIndicatorIOS
+          size='large'/> ) :
+      ( <View/> );
     return (
       <View style={styles.container}>
         <Text style={styles.description}>
@@ -87,6 +100,7 @@ class SearchPage extends Component {
           <TextInput
             style={styles.searchInput}
             value={this.state.searchString}
+            onChange={this.onSearchTextChanged.bind(this)}
             placeholder='Search via name or postcode' />
           <TouchableHighlight style={styles.button}
               underlayColor='#99d9f4'>
@@ -98,6 +112,7 @@ class SearchPage extends Component {
           <Text style={styles.buttonText}>Location</Text>
         </TouchableHighlight>
         <Image source={require('./resources/house.png')} style={styles.image}/>
+        {spinner}
       </View>
     );
   }

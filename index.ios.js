@@ -1,6 +1,11 @@
 'use strict';
 import React, {Component} from 'react';
-import {AppRegistry, NavigatorIOS, View, Text} from 'react-native';
+import {
+  AppRegistry,
+  NavigatorIOS,
+  View,
+  Text
+} from 'react-native';
 var SearchPage = require('./SearchPage');
 
 var styles = {
