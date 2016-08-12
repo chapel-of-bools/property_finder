@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
   TouchableHighlight,
-  ActivityIndicatorIOS,
+  ActivityIndicator,
   Image
 } from 'react-native'
 
@@ -62,12 +62,31 @@ var styles = {
   }
 }
 
+function urlForQueryAndPage(key, value, pageNumber) {
+  var data = {
+    country: 'uk',
+    pretty: '1',
+    encoding: 'json',
+    listing_type: 'buy',
+    action: 'search_listings',
+    page: pageNumber
+  };
+  data[key] = value;
+
+  var querystring = Object.keys(data)
+    .map(key => key + '=' + encodeURIComponent(data[key]))
+    .join('&');
+
+  return 'http://api.nestoria.co.uk/api?' + querystring;
+};
+
 class SearchPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchString: 'london',
-      isLoading: false
+      isLoading: false,
+      message: ''
     };
   }
   onSearchTextChanged(event) {
@@ -78,14 +97,30 @@ class SearchPage extends Component {
   _executeQuery(query) {
     console.log(query);
     this.setState({ isLoading: true });
+    fetch(query)
+      .then(response => response.json())
+      .then(json => this._handleResponse(json.response))
+      .catch(error =>
+        this.setState({
+          isLoading: false,
+          message: 'Something bad happened ' + error
+        }));
+  }
+  _handleResponse(response) {
+    this.setState({ isLoading: false , message: '' });
+    if (response.application_response_code.substr(0, 1) === '1') {
+      console.log('Properties found: ' + response.listings.length);
+    } else {
+      this.setState({ message: 'Location not recognized; please try again.'});
+    }
   }
   onSearchPressed() {
     var query = urlForQueryAndPage('place_name', this.state.searchString, 1);
-    thi._executeQuery(query);
+    this._executeQuery(query);
   }
   render() {
     var spinner = this.state.isLoading ?
-      ( <ActivityIndicatorIOS
+      ( <ActivityIndicator
           size='large'/> ) :
       ( <View/> );
     return (
@@ -103,7 +138,8 @@ class SearchPage extends Component {
             onChange={this.onSearchTextChanged.bind(this)}
             placeholder='Search via name or postcode' />
           <TouchableHighlight style={styles.button}
-              underlayColor='#99d9f4'>
+              underlayColor='#99d9f4'
+              onPress={this.onSearchPressed.bind(this)}>
             <Text style={styles.buttonText}>Go</Text>
           </TouchableHighlight>
         </View>
@@ -113,6 +149,7 @@ class SearchPage extends Component {
         </TouchableHighlight>
         <Image source={require('./resources/house.png')} style={styles.image}/>
         {spinner}
+        <Text style={styles.description}>{this.state.message}</Text>
       </View>
     );
   }
